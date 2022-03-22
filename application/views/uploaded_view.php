@@ -1,21 +1,24 @@
-<?php /* @var dto\ContainerOfCalls $container */ ?>
+<?php /* @var dto\ContainerOfReport $container */ ?>
 
 <table>
     <thead>
     <tr>
         <th>Customer ID</th>
-        <th></th>
-        <th></th>
-        <th></th>
+        <th>Calls to same continent</th>
+        <th>Duration continent</th>
+        <th>Total calls</th>
+        <th>Total duration</th>
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($container->get() as $item): ?>
+
+    <?php foreach ($container->getList() as $item): ?>
         <tr>
-            <td><?= $item->getCustomerId() ?></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td style="text-align: center;"><?=$item->getCustomerId();?></td>
+            <td style="text-align: center;"><?=$item->getCallToSameContinent();?></td>
+            <td style="text-align: center;"><?=$item->getDurationToSameContinent();?></td>
+            <td style="text-align: center;"><?=$item->getTotalCalls();?></td>
+            <td style="text-align: center;"><?=$item->getTotalDuration();?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>

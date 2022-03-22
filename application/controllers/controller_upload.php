@@ -2,10 +2,15 @@
 
 use dto\CallElement;
 use dto\ContainerOfCalls;
+use dto\ContainerOfReport;
+use dto\Customer;
+use dto\CustomersList;
+use dto\ReportElement;
 use exceptions\BaseException;
 use exceptions\MethodNotAllowed;
 use exceptions\BadRequestException;
 use external\IpStackExternalService;
+use internal\PhoneCodeInternalService;
 
 class Controller_Upload extends Controller
 {
@@ -13,11 +18,15 @@ class Controller_Upload extends Controller
 
     private IpStackExternalService $ip_stack_external_service;
 
+    private PhoneCodeInternalService $phone_code_internal_service;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->ip_stack_external_service = new IpStackExternalService();
+
+        $this->phone_code_internal_service = new PhoneCodeInternalService();
     }
 
     public function action_index()
@@ -25,14 +34,66 @@ class Controller_Upload extends Controller
         try {
             $this->validateOrException();
 
-            $container = $this->getContainerOfCalls();
+            $containers = $this->getContainerOfCalls();
 
             $this->view->generate('uploaded_view.php', 'template_view.php', [
-                'container' => $this->getContainerOfCalls()
+                'container' => $this->getReportingOfCustomers($containers)
             ]);
         } catch (BaseException $unprocessable_entity_exception) {
             Route::ErrorPage($unprocessable_entity_exception->getCode());
         }
+    }
+
+    private function getReportingOfCustomers($calls) : ContainerOfReport
+    {
+        $customers = $this->getUniqCustomers($calls);
+
+        $container_of_reports = new ContainerOfReport();
+
+        foreach ($customers->getListOfCustomers() as $customer){
+            // start data
+            $toSameContinentDuration  = 0;
+            $toSameContinentCalls = 0;
+            $totalDuration = 0;
+            $totalCalls = 0;
+
+            foreach ($calls->getList() as $call){
+                if($call->getCustomerId() === $customer->getId()){
+                    if($call->getDialedContinent() === $customer->getContinent()){
+                        $toSameContinentDuration += $call->getDuration();
+                        $toSameContinentCalls++;
+                    }
+                    $totalDuration += $call->getDuration();
+                    $totalCalls++;
+                }
+
+            }
+
+            $report_element = new ReportElement(
+                (int) $customer->getId(),
+                (int) $toSameContinentCalls,
+                (int) $toSameContinentDuration,
+                (int) $totalCalls,
+                (int) $totalDuration,
+            );
+
+            $container_of_reports->push($report_element);
+        }
+        return $container_of_reports;
+    }
+
+    private function getUniqCustomers ($calls) : CustomersList
+    {
+        $customers = new CustomersList();
+        foreach ($calls->getList() as $call) {
+            $customer = new Customer($call->getCustomerId(), $call->getDialedContinent());
+
+            if (!in_array($customer->getId(), $customers->getListOfCustomersId())) {
+                $customers->push($customer);
+            }
+        }
+
+        return $customers;
     }
 
     private function getContainerOfCalls(): ContainerOfCalls
@@ -52,7 +113,8 @@ class Controller_Upload extends Controller
                 (string)$call_data[1],
                 (string)$call_data[3],
                 $ip,
-                $this->ip_stack_external_service->findByIp($ip)
+                (string)$this->ip_stack_external_service->findByIp($ip),
+                (string)$this->phone_code_internal_service->findByDialedPhone($call_data[3])
             );
 
             $container_of_calls->push($call_element);

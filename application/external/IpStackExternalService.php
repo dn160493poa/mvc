@@ -3,29 +3,30 @@
 namespace external;
 
 use exceptions\BadResponseException;
-use external\output\Country;
 
 class IpStackExternalService
 {
     private const BASE_URL = 'http://api.ipstack.com';
 
-    private const API_KEY = '0d0c2a27212bc3be9b5529b24f5e0d17';
+    private const API_KEY = '239de47fa9e4477adb8c7aafad362b24';
 
-    private const NEED_KEYS_IN_RESPONSE = ['country_code', 'country_name'];
+    private const NEED_KEYS_IN_RESPONSE = ['continent_name'];
 
-    public function findByIp(string $ip): Country
+    public function findByIp(string $ip): string
     {
-//        $ch = $this->makeCurlRequest($ip);
-//        $result = curl_exec($ch);
-//        $decode_result = json_decode($result, true);
-        $decode_result = ['country_name' => 'Germany', 'country_code' => 'DE'];
+        //$ch = $this->makeCurlRequest($ip);
+        //$result = curl_exec($ch);
+        //$decode_result = json_decode($result, true);
 
-        $this->validateResponseOrException($decode_result);
+        //$this->validateResponseOrException($decode_result);
 
-        return new Country(
-            $decode_result['country_name'],
-            $decode_result['country_code']
-        );
+        //$answer = $decode_result["continent_name"];
+
+//        $answer = ['Asia', 'Africa', 'Europe', 'North America', 'Oceania', 'South America', 'Antarctica']
+//            [array_rand(['Asia', 'Africa', 'Europe', 'North America', 'Oceania', 'South America', 'Antarctica'], 1)];
+        $answer = 'Europe';
+
+        return $answer;
     }
 
     private function validateResponseOrException(array $decode_result): void

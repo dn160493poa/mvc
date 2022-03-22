@@ -1,27 +1,27 @@
 <?php
 
+
 namespace dto;
 
-class ContainerOfCalls
+
+class ContainerOfReport
 {
     /**
-     * @var array|CallElement[]
+     * @var array|ReportElement[]
      */
     private array $list = [];
 
-    public function push(CallElement $call_element): void
+    public function push(ReportElement $call_element): void
     {
         $this->list[] = $call_element;
     }
 
     /**
-     * @return array|CallElement[]
+     * @return array|ReportElement[]
      */
     public function getList(): array
     {
         return $this->list;
     }
-
-
 
 }

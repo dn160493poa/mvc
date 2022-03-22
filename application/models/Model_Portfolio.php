@@ -1,5 +1,7 @@
 <?php
 
+namespace model;
+
 class Model_Portfolio extends Model
 {
 	

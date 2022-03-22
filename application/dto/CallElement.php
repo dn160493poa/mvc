@@ -3,8 +3,6 @@
 namespace dto;
 
 use DateTime;
-use external\output\Country;
-use external\output\InformationOfIp;
 
 class CallElement
 {
@@ -18,23 +16,29 @@ class CallElement
 
     private string $ip;
 
-    private Country $country;
+    private string $continent;
 
-    public function __construct(
-        int $customer_id,
-        int $duration,
-        string $time_day_of_call,
-        string $dialed_phone_number,
-        string $ip,
-        Country $country
-    )
+    private string $dialedContinent;
+
+    /**
+     * CallElement constructor.
+     * @param int $customer_id
+     * @param int $duration
+     * @param string $time_day_of_call
+     * @param string $dialed_phone_number
+     * @param string $ip
+     * @param string $continent
+     * @param string $dialedContinent
+     */
+    public function __construct(int $customer_id, int $duration, string $time_day_of_call, string $dialed_phone_number, string $ip, string $continent, string $dialedContinent)
     {
         $this->customer_id = $customer_id;
         $this->duration = $duration;
         $this->setTimeDayOfCall($time_day_of_call);
         $this->dialed_phone_number = $dialed_phone_number;
         $this->ip = $ip;
-        $this->country = $country;
+        $this->continent = $continent;
+        $this->dialedContinent = $dialedContinent;
     }
 
     /**
@@ -46,19 +50,19 @@ class CallElement
     }
 
     /**
-     * @return string
-     */
-    public function getTimeDayOfCall(): string
-    {
-        return $this->time_day_of_call;
-    }
-
-    /**
      * @return int
      */
     public function getDuration(): int
     {
         return $this->duration;
+    }
+
+    /**
+     * @return string|void
+     */
+    public function getTimeDayOfCall(): string
+    {
+        return $this->time_day_of_call;
     }
 
     /**
@@ -78,12 +82,27 @@ class CallElement
     }
 
     /**
-     * @return Country
+     * @return string
      */
-    public function getCountry(): Country
+    public function getContinent(): string
     {
-        return $this->country;
+        return $this->continent;
     }
+
+    /**
+     * @return string
+     */
+    public function getDialedContinent(): string
+    {
+        return $this->dialedContinent;
+    }
+
+    /**
+     * @return string
+     */
+
+
+
 
     private function setTimeDayOfCall(string $time_day_of_call): void
     {
